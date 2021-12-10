@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+<title>Gráfico Depreciação 2021</title>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="card text-center m-auto mt-4">
+            <div class="card-header" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%); color: white;">
+                <div class="row">
+                    <div class="col">
+                        <h6>Ano</h6>
+                            <select class="form-select mb-3" id="selectano" onchange="carregarano(this.value)">
+                                <option selected value="1">Selecione</option>
+                                <option value="2018">2018</option>
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                            </select>
+                    </div>
+                    <div class="col">
+                        <h6>Mês</h6>
+                            <select class="form-select mb-3">
+                                <option selected value="1">Selecione</option>
+                                    <option value="Janeiro">Janeiro</option>
+                                    <option value="Fevereiro">Fevereiro</option>
+                                    <option value="Março">Março</option>
+                                    <option value="Abril">Abril</option>
+                                    <option value="Maio">Maio</option>
+                                    <option value="Junho">Junho</option>
+                                    <option value="Julho">Julho</option>
+                                    <option value="Agosto">Agosto</option>
+                                    <option value="Setembro">Setembro</option>
+                                    <option value="Outubro">Outubro</option>
+                                    <option value="Novembro">Novembro</option>
+                                    <option value="Dezembro">Dezembro</option>
+                            </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header" style="background: linear-gradient(to right, #F96332FF 0%, rgb(248, 125, 85) 60%, rgb(250, 141, 105) 100%); color: white;">
+                <h3 id="title" style="font-variant: small-caps;">Depreciação</h3>   
+            </div>
+            <div class="card-body" style="background-color: #e7e7e7;">
+                <canvas id="myChart"></canvas>
+            </div>
+            <div class="card-footer mb-4" style="background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%); color: white;">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio1" onfocus="preecherEdificio()">
+                    <label class="form-check-label" for="radio1">Edifício</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio2" onfocus="preecherFerramentas()">
+                    <label class="form-check-label" for="radio2">Ferramentas</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio3" onfocus="preecherMaquinas()">
+                    <label class="form-check-label" for="radio3">Máquinas e Equip.</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio4" onfocus="preecherInstalacoes()">
+                    <label class="form-check-label" for="radio4">Instalações</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio5" onfocus="preecherMoveis()">
+                    <label class="form-check-label" for="radio5">Móveis e Utens.</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio6" onfocus="preecherVeiculos()">
+                    <label class="form-check-label" for="radio6">Veículos</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio7" onfocus="preecherVeiculosCarga()">
+                    <label class="form-check-label" for="radio7">Veículos de Carga</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="radio8" onfocus="preecherComputadores()">
+                    <label class="form-check-label" for="radio8">Computadores</label>
+                  </div>
+                  <hr>
+                  <button class="btn btn-success" id="preencher" onclick="preecherT()">Visualizar Todos</button>
+                  <button class="btn btn-danger" id="limpar" onclick="limpar()">Limpar Gráfico</button>
+            </div>
+        </div>
+    </div>
+
+    <!--CDN Chart-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.2/chart.min.js" integrity="sha512-tMabqarPtykgDtdtSqCL3uLVM0gS1ZkUAVhRFu1vSEFgvB73niFQWJuvviDyBGBH22Lcau4rHB5p2K2T0Xvr6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--Jquery-->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+
+    <script>
+        
+        //Alterar título com respectivo ano inserido no Select
+        function carregarano(value){
+            let ano = document.getElementById("selectano").value;
+            if(value != 1){
+              document.getElementById('title').innerHTML = 'Depreciação ' + '<b>' + ano + '</b>';
+            }
+                else{
+                    document.getElementById('title').innerHTML = 'Depreciação'};
+        };
+
+        //Altera estado dos checkbox (true)
+        $(document).ready(function(){
+            $('#preencher').click(function(){
+                var val = this.click;
+                $('.form-check-input').each(function(){
+                    $(this).prop('checked', true);
+                });
+            });
+        });
+
+        //Altera estado dos checkbox (false)
+        $(document).ready(function(){
+            $('#limpar').click(function(){
+                var val = this.click;
+                $('.form-check-input').each(function(){
+                    $(this).prop('checked', false);
+                });
+            });
+        });
+
+        //meses
+        const meses  = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" ];
+
+        //Dados Ficticios
+        const edificios = [550000, 422000, 290000, 420000, 560000, 330000, 410000, 580000, 610000, 480000, 440000, 470000];
+        const ferramentas = [450000, 427000, 294000, 440000, 250000, 430000, 310000, 450000, 580000, 570000, 290000, 370000];
+        const maquinas = [540000, 490000, 600000, 470000, 500000, 380000, 450000, 420000, 510000, 470000, 400000, 430000];
+        const instalacoes = [500000, 492000, 360000, 500000, 200000, 300000, 450000, 450000, 650000, 420000, 460000, 400000];
+        const moveiseut = [570000, 492000, 500000, 500000, 200000, 300000, 450000, 450000, 650000, 420000, 460000, 400000];
+        const veiculos = [420000, 492000, 450000, 500000, 200000, 300000, 450000, 450000, 650000, 420000, 460000, 400000];
+        const veiculoscarga = [570000, 470000, 340000, 500000, 200000, 300000, 450000, 450000, 650000, 420000, 460000, 400000];
+        const computadores = [500000, 492000, 300000, 500000, 200000, 300000, 450000, 450000, 650000, 420000, 460000, 400000];
+
+        //Const para Limpar grafico
+        const atualizar = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        
+        var chart = new Chart(myChart, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [
+                {
+                label:'Edifícios',
+                backgroundColor: '#F4C769',
+                borderColor: '#F4C769',
+                },
+                {
+                label: 'Ferramentas',
+                backgroundColor: '#F37455',
+                borderColor: '#F37455',
+                },
+                {
+                label: 'Maquinas e Equip.',
+                backgroundColor: '#732002',
+                borderColor: '#732002',
+                },
+                {
+                label: 'Instalações',
+                backgroundColor: '#856CAA',
+                borderColor: '#856CAA',
+                },
+                {
+                label: 'Móveis e Utens.',
+                backgroundColor: '#7090AA',
+                borderColor: '#7090AA',
+                },
+                {
+                label: 'Veículos',
+                backgroundColor: '#812F33',
+                borderColor: '#812F33',
+                },
+                {
+                label: 'Veículos de carga',
+                backgroundColor: '#BDCC94',
+                borderColor: '#BDCC94',
+
+                },
+                {
+                label: 'Computadores',
+                backgroundColor: '#003F63',
+                borderColor: '#003F63',
+
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        //Preencher Edifício
+        function preecherEdificio(){
+            chart.data.datasets[0].data = edificios;
+            chart.update();
+        };
+        //Preencher Ferramentas
+        function preecherFerramentas(){
+            chart.data.datasets[1].data = ferramentas;
+            chart.update();
+        };
+        //Preencher Maquinas e Equipamentos
+        function preecherMaquinas(){
+            chart.data.datasets[2].data = maquinas;
+            chart.update();
+        };
+        //Preencher Instalações
+        function preecherInstalacoes(){
+            chart.data.datasets[3].data = instalacoes;
+            chart.update();
+        };
+        //Preencher Moveis
+        function preecherMoveis(){
+            chart.data.datasets[4].data = moveiseut;
+            chart.update();
+        };
+        //Preencher Veículos
+        function preecherVeiculos(){
+            chart.data.datasets[5].data = veiculos;
+            chart.update();
+        };
+        //Preencher Veículos Carga
+        function preecherVeiculosCarga(){
+            chart.data.datasets[6].data = veiculoscarga;
+            chart.update();
+        };
+        //Preencher Computadores
+        function preecherComputadores(){
+            chart.data.datasets[7].data = computadores;
+            chart.update();
+        };
+        
+        //Preencher Todos
+        function preecherT(){
+            chart.data.datasets[0].data = edificios;
+            chart.data.datasets[1].data = ferramentas;
+            chart.data.datasets[2].data = maquinas;
+            chart.data.datasets[3].data = instalacoes;
+            chart.data.datasets[4].data = moveiseut;
+            chart.data.datasets[5].data = veiculos;
+            chart.data.datasets[6].data = veiculoscarga;
+            chart.data.datasets[7].data = computadores;
+            chart.update();
+        };
+
+        //Limpar Gráfico
+        function limpar(){
+            chart.data.datasets[0].data = atualizar;
+            chart.data.datasets[1].data = atualizar;
+            chart.data.datasets[2].data = atualizar;
+            chart.data.datasets[3].data = atualizar;
+            chart.data.datasets[4].data = atualizar;
+            chart.data.datasets[5].data = atualizar;
+            chart.data.datasets[6].data = atualizar;
+            chart.data.datasets[7].data = atualizar;
+            chart.update();
+        };
+
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+
+  </body>
+</html>
